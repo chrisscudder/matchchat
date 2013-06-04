@@ -1,0 +1,5 @@
+name = Matchchat
+description = Integrate with the Matchchat API
+package = Matchchat
+core = 6.x
+version = 6.x-1.0-rc1

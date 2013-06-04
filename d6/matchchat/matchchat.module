@@ -1,0 +1,72 @@
+<?php
+/**
+ * @file
+ * Installation file for the Matchchat module.
+ */
+
+/**
+ * Implements hook_init().
+ */
+function matchchat_init() {
+  drupal_add_js(drupal_get_path('module', 'matchchat') . '/matchchat.js');
+  matchchat_add_meta();
+}
+
+function matchchat_add_meta() {
+  $nid = 0;
+  if (drupal_is_front_page()) {
+    $front_url = variable_get('site_frontpage', 'node');
+    $front_url = drupal_get_normal_path($front_url);
+    $front_url = trim($front_url, '/');
+    $front = explode('/', $front_url);
+    if ( count($front) > 1 && $front[0]=='node' && ctype_digit($front[1]) ) {
+      $nid = $front[1];
+    }
+  }
+  else {
+    if (arg(0) == 'node' && is_numeric(arg(1))) $nid = arg(1);
+  }
+  drupal_set_html_head("<meta name='mcPostID' content='$nid'>");
+}
+
+
+/**
+ * Implementation of hook_block().
+ * @param string $op one of "list", "view", "save" and "configure"
+ * @param integer $delta code to identify the block
+ * @param array $edit only for "save" operation
+*/
+function matchchat_block($op = 'list', $delta = 0, $edit = array()) {  
+
+  // set up an empty array which will contain the block contents
+  $block = array();
+  
+  switch ($op) {
+    case "list":
+      $block[0]["info"] = t('Matchchat comments area');
+      break;
+    
+    case "view":
+      switch($delta) {
+        case 0:
+          $block = array('subject' => '<none>','content' => matchchat_block_html());
+          break;
+      }
+      break;
+
+    case "save":
+      break;
+
+    case "configure":
+      break;
+  }
+
+  return $block;
+}
+
+/**
+ * HTML for comments
+ */
+function matchchat_block_html() {
+  return "<div id='mccomments'></div>";
+}
